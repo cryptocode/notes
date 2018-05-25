@@ -1,7 +1,6 @@
 from nanoapi import (Client, SocketConnection, types)
 
-# Domain socket. On multiuser systems, this file can be protected to
-# allow only certain users.
+# Domain socket. On multiuser systems, this file can be protected to allow only specific users
 nano = Client(SocketConnection('/var/nano/api'))
 
 pending = types.query_account_pending();
