@@ -4,12 +4,14 @@ from nanoapi import (API, SocketConnection, types)
 conn = SocketConnection('/tmp/nano')
 api = API(conn)
 
+# Create Account Pending query
 pending = types.query_account_pending();
 pending.threshold.value = "200000000000000000000000";
 pending.accounts.append("xrb_16u1uufyoig8777y6r8iqjtrw8sg8maqrm36zzcm95jmbd9i9aj5i8abr8u5");
 pending.accounts.append("xrb_3eff1rokrp4ryronxpjdhzijxt9oax117xtn3eaqcaxcemp6y6fkarpqq8wj");
 
-res = api.accounts_pending(pending)
+# Send the query to the node
+res = api.query(pending)
 
 # Print result as JSON
 print api.to_json(res)
