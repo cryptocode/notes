@@ -4,16 +4,18 @@ import sys
 import struct
 import time
 from google.protobuf.json_format import MessageToJson
+import google.protobuf.descriptor_pb2
 
 class API:
     def __init__(self, conn):
         self.conn = conn
 
-    def accounts_pending(self, query):
-        res = self.conn.send_query(types.ACCOUNT_PENDING, query)
-        pending = types.res_account_pending();
-        pending.ParseFromString(res);
-        return pending
+    def query(self, query_object):
+        typename = type(query_object).__name__
+        res = self.conn.send_query(eval('types.'+typename[6:].upper()), query_object)
+        res_obj = eval('types.res_' + typename[6:].lower() + '()')
+        res_obj.ParseFromString(res)
+        return res_obj
 
     def to_json(self, obj):
         return MessageToJson(obj)
@@ -39,11 +41,13 @@ class SocketConnection:
         str_header = header.SerializeToString()
         str_query = query.SerializeToString()
 
+        # <i is little endian 32-bit
         packed_heading = struct.pack("<i%ds" % (len(str_header),), len(str_header), str_header)
         packed_query = struct.pack("<i%ds" % (len(str_query),), len(str_query), str_query)
         self.sock.sendall(packed_heading)
         self.sock.sendall(packed_query)
 
+        # Get response header
         response_buf = ''
         while len(response_buf) < 4:
             response_buf += self.sock.recv(1)
@@ -55,8 +59,8 @@ class SocketConnection:
 
         response = types.response();
         response.ParseFromString(response_buf);
-        print >> sys.stderr, "Got response type: %d " % response.type
 
+        # Get response
         response_buf = ''
         while len(response_buf) < 4:
             response_buf += self.sock.recv(1)
