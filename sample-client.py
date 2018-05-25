@@ -2,7 +2,7 @@ from nanoapi import (Client, SocketConnection, types)
 
 # Domain socket. On multiuser systems, this file can be protected to
 # allow only certain users.
-nano = Client(SocketConnection('/tmp/nano'))
+nano = Client(SocketConnection('/var/nano/api'))
 
 pending = types.query_account_pending();
 pending.threshold.value = "200000000000000000000000";
