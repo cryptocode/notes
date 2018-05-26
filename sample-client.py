@@ -1,7 +1,8 @@
 from nanoapi import (Client, SocketConnection, Model)
 
 # Domain socket. On multiuser systems, this file can be protected to allow only specific users.
-nano = Client(SocketConnection('/var/nano'))
+# Replace with tcp:// to use sockets
+nano = Client(SocketConnection('local:///var/nano'))
 
 pending = Model.query_account_pending();
 pending.threshold.value = "200000000000000000000000";
